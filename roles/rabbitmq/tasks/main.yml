@@ -1,191 +1,30 @@
 ---
-# tasks file for rabbitmq
-- name: create rabbitmq
-  k8s:
-    definition:
-      apiVersion: v1
-      kind: ServiceAccount
-      metadata:
-        name: '{{ meta.name }}-rabbitmq'
-        namespace: '{{ meta.namespace }}'
 
-- name: Add rbac
-  k8s:
-    definition:
-      kind: Role
-      apiVersion: rbac.authorization.k8s.io/v1beta1
-      metadata:
-        name: endpoint-reader
-        namespace: '{{ meta.namespace }}'
-      rules:
-      - apiGroups: [""]
-        resources: ["endpoints"]
-        verbs: ["get"]
+- name: Find service name
+  set_fact:
+  service_name: |-
+    {% if service is defined %}
+    '{{ meta.name }}-rabbitmq-service'
+    {% else %}
+    {{ service }}
+    {% endif %}
 
-- name: Add rolebinding
-  k8s:
-    definition:
-      kind: RoleBinding
-      apiVersion: rbac.authorization.k8s.io/v1beta1
-      metadata:
-        name: endpoint-reader
-        namespace: '{{ meta.namespace }}'
-      subjects:
-      - kind: ServiceAccount
-        name: '{{ meta.name }}-rabbitmq'
-      roleRef:
-        apiGroup: rbac.authorization.k8s.io
-        kind: Role
-        name: endpoint-reader
 
-- name: List Secrets
-  k8s_facts:
-    kind: Secret
-    namespace: '{{ meta.namespace }}'
-    field_selectors: 'metadata.name={{ meta.name }}-secret'
-  register: secret_list
+- name: Find configMap name
+  set_fact:
+  configMap_name: |-
+    {% if configMap is defined %}
+    '{{ meta.name }}-rabbitmq-configMap'
+    {% else %}
+    {{ configMap }}
+    {% endif %}
 
-- name: Add Secret
-  k8s:
-    definition:
-      kind: Secret
-      apiVersion: v1
-      metadata:
-        namespace: '{{ meta.namespace }}'
-        name: '{{ meta.name }}-secret'
-      type: Opaque
-      data:
-        token: "{{ lookup('password', '/dev/null chars=ascii_letters,digits length=250') | b64encode }}"
-  when: not secret_list.resources|length>0
+- import_tasks: rbac.yml
 
-- name: Add service
-  k8s:
-    definition:
-      kind: Service
-      apiVersion: v1
-      metadata:
-        namespace: '{{ meta.namespace }}'
-        name: rabbitmq
-        labels:
-          app: rabbitmq
-          type: LoadBalancer
-      spec:
-        type: ClusterIP
-        ports:
-         - name: http
-           protocol: TCP
-           port: 15672
-           targetPort: 15672
-         - name: amqp
-           protocol: TCP
-           port: 5672
-           targetPort: 5672
-        selector:
-          app: rabbitmq
+- import_tasks: secret.yml
 
-- name: Add configmap
-  k8s:
-    definition:
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: '{{ meta.name }}-config'
-        namespace: '{{ meta.namespace }}'
-      data:
-        enabled_plugins: |
-            [rabbitmq_management,rabbitmq_peer_discovery_k8s].
+- import_tasks: configmap.yml
 
-        rabbitmq.conf: |
-            ## Cluster formation. See http://www.rabbitmq.com/cluster-formation.html to learn more.
-            cluster_formation.peer_discovery_backend  = rabbit_peer_discovery_k8s
-            cluster_formation.k8s.host = kubernetes.default.svc.cluster.local
-            ## Should RabbitMQ node name be computed from the pod's hostname or IP address?
-            ## IP addresses are not stable, so using [stable] hostnames is recommended when possible.
-            ## Set to "hostname" to use pod hostnames.
-            ## When this value is changed, so should the variable used to set the RABBITMQ_NODENAME
-            ## environment variable.
-            cluster_formation.k8s.address_type = ip
-            ## How often should node cleanup checks run?
-            cluster_formation.node_cleanup.interval = 30
-            ## Set to false if automatic removal of unknown/absent nodes
-            ## is desired. This can be dangerous, see
-            ##  * http://www.rabbitmq.com/cluster-formation.html#node-health-checks-and-cleanup
-            ##  * https://groups.google.com/forum/#!msg/rabbitmq-users/wuOfzEywHXo/k8z_HWIkBgAJ
-            cluster_formation.node_cleanup.only_log_warning = true
-            cluster_partition_handling = autoheal
-            ## See http://www.rabbitmq.com/ha.html#master-migration-data-locality
-            queue_master_locator=min-masters
-            ## See http://www.rabbitmq.com/access-control.html#loopback-users
-            loopback_users.guest = false
+- import_tasks: service.yml
 
-- name: Add sts
-  k8s:
-    definition:
-      apiVersion: apps/v1beta1
-      kind: StatefulSet
-      metadata:
-        name: '{{ meta.name }}-rabbitmq-service'
-        namespace: '{{ meta.namespace }}'
-      spec:
-        serviceName: '{{ meta.name }}-rabbitmq-service'
-        replicas: "{{size}}"
-        template:
-          metadata:
-            labels:
-              app: rabbitmq
-          spec:
-            serviceAccountName: '{{ meta.name }}-rabbitmq'
-            terminationGracePeriodSeconds: 10
-            containers:
-            - name: rabbitmq-k8s
-              image: rabbitmq:3.7
-              volumeMounts:
-                - name: config-volume
-                  mountPath: /etc/rabbitmq
-              ports:
-                - name: http
-                  protocol: TCP
-                  containerPort: 15672
-                - name: amqp
-                  protocol: TCP
-                  containerPort: 5672
-              livenessProbe:
-                exec:
-                  command: ["rabbitmqctl", "status"]
-                initialDelaySeconds: 60
-                # See https://www.rabbitmq.com/monitoring.html for monitoring frequency recommendations.
-                periodSeconds: 60
-                timeoutSeconds: 15
-              readinessProbe:
-                exec:
-                  command: ["rabbitmqctl", "status"]
-                initialDelaySeconds: 20
-                periodSeconds: 60
-                timeoutSeconds: 10
-              imagePullPolicy: Always
-              env:
-                - name: MY_POD_IP
-                  valueFrom:
-                    fieldRef:
-                      fieldPath: status.podIP
-                - name: RABBITMQ_USE_LONGNAME
-                  value: "true"
-                # See a note on cluster_formation.k8s.address_type in the config file section
-                - name: RABBITMQ_NODENAME
-                  value: "rabbit@$(MY_POD_IP)"
-                - name: K8S_SERVICE_NAME
-                  value: "rabbitmq"
-                - name: RABBITMQ_ERLANG_COOKIE
-                  valueFrom:
-                    secretKeyRef:
-                      name: '{{ meta.name }}-secret'
-                      key: token
-            volumes:
-              - name: config-volume
-                configMap:
-                  name: '{{ meta.name }}-config'
-                  items:
-                  - key: rabbitmq.conf
-                    path: rabbitmq.conf
-                  - key: enabled_plugins
-                    path: enabled_plugins
+- import_tasks: sts.yml
