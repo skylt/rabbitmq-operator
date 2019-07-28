@@ -5,7 +5,7 @@
       apiVersion: v1
       kind: ConfigMap
       metadata:
-        name: '{{ configMap_name }}'
+        name: '{{ configmap_name }}'
         namespace: '{{ meta.namespace }}'
       data:
         enabled_plugins: |
@@ -33,4 +33,4 @@
             queue_master_locator=min-masters
             ## See http://www.rabbitmq.com/access-control.html#loopback-users
             loopback_users.guest = false
-  when: configMap is defined
+  when: configmap is not defined

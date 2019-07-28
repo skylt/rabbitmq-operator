@@ -1,23 +1,11 @@
 ---
-
 - name: Find service name
   set_fact:
-  service_name: |-
-    {% if service is defined %}
-    '{{ meta.name }}-rabbitmq-service'
-    {% else %}
-    {{ service }}
-    {% endif %}
-
+    service_name: '{{service|default(meta.name+"-rabbitmq-service")}}'
 
 - name: Find configMap name
   set_fact:
-  configMap_name: |-
-    {% if configMap is defined %}
-    '{{ meta.name }}-rabbitmq-configMap'
-    {% else %}
-    {{ configMap }}
-    {% endif %}
+    configmap_name: '{{configmap|default(meta.name+"-rabbitmq-configmap")}}'
 
 - import_tasks: rbac.yml
 

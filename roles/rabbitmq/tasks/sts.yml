@@ -64,7 +64,7 @@
             volumes:
               - name: config-volume
                 configMap:
-                  name: '{{ configMap_name }}'
+                  name: '{{ configmap_name }}'
                   items:
                   - key: rabbitmq.conf
                     path: rabbitmq.conf
