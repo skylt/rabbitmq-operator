@@ -22,9 +22,10 @@
   vars:
     ansible_python_interpreter: '{{ ansible_playbook_python }}'
     deploy_dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/deploy"
+    cr_dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/cr"
     pull_policy: Never
     REPLACE_IMAGE: rabbitmq.olibre.io/rabbitmq-operator:testing
-    custom_resource: "{{ lookup('file', '/'.join([deploy_dir, 'crds/rabbitmq_v1alpha1_rabbitmq_cr.yaml'])) | from_yaml }}"
+    custom_resource: "{{ lookup('file', '/'.join([cr_dir, 'simple.yaml'])) | from_yaml }}"
   tasks:
   - block:
     - name: Delete the Operator Deployment
