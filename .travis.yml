@@ -3,11 +3,7 @@ services: docker
 language: python
 install:
   - pip install docker molecule openshift jmespath
-  - mkdir -p $GOPATH/src/github.com && git clone https://github.com/operator-framework/operator-sdk --branch v0.8.2 $GOPATH/src/github.com/operator-framework/operator-sdk && cd $GOPATH/src/github.com/operator-framework/operator-sdk && make install && cd -
-
-before_install:
-  - eval "$(curl -sL https://raw.githubusercontent.com/travis-ci/gimme/master/gimme | GIMME_GO_VERSION=1.12.7 bash)"
 script:
   - molecule test -s test-local
-  - 'operator-sdk build skylt/rabbitmq-operator:$TRAVIS_COMMIT'
+  - docker build -t rabbitmq-operator-test -f build/Dockerfile .
 
