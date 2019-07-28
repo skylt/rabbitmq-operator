@@ -55,7 +55,7 @@
                 - name: RABBITMQ_NODENAME
                   value: "rabbit@$(MY_POD_IP)"
                 - name: K8S_SERVICE_NAME
-                  value: "rabbitmq"
+                  value: '{{ service_name }}'
                 - name: RABBITMQ_ERLANG_COOKIE
                   valueFrom:
                     secretKeyRef:
