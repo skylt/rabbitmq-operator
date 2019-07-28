@@ -1,13 +1,13 @@
 dist: bionic
 sudo: required
 services: docker
-language: generic
+language: python
 install:
-  - python3.7 -m pip install docker molecule openshift jmespath
-  - eval "$(gimme 1.12.7)" && mkdir -p $GOPATH/src/github.com && git clone https://github.com/operator-framework/operator-sdk --branch v0.8.2 $GOPATH/src/github.com/operator-framework/operator-sdk && cd $GOPATH/src/github.com/operator-framework/operator-sdk && make install && cd -
+  - pip install docker molecule openshift jmespath
+  - mkdir -p $GOPATH/src/github.com && git clone https://github.com/operator-framework/operator-sdk --branch v0.8.2 $GOPATH/src/github.com/operator-framework/operator-sdk && cd $GOPATH/src/github.com/operator-framework/operator-sdk && make install && cd -
 
 before_install:
-  - sudo apt-get install -y python3.7-dev python3-pip python3-setuptools python3-wheel
+  - eval "$(curl -sL https://raw.githubusercontent.com/travis-ci/gimme/master/gimme | GIMME_GO_VERSION=1.12.7 bash)"
 script:
   - molecule test -s test-local
   - 'operator-sdk build skylt/rabbitmq-operator:$TRAVIS_COMMIT'
