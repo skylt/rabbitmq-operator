@@ -3,5 +3,4 @@ kind: Rabbitmq
 metadata:
   name: toto
 spec:
-  # Add fields here
   size: 2

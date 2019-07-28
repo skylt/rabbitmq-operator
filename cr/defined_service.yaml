@@ -1,0 +1,31 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  namespace: rabbitmq-op
+  name: my-rabbitmq-service
+  labels:
+    app: rabbitmq
+    type: LoadBalancer
+spec:
+  type: ClusterIP
+  ports:
+   - name: http
+     protocol: TCP
+     port: 15672
+     targetPort: 15672
+   - name: amqp
+     protocol: TCP
+     port: 5672
+     targetPort: 5672
+  selector:
+    app: rabbitmq
+---
+apiVersion: rabbitmq.olibre.io/v1alpha1
+kind: Rabbitmq
+metadata:
+  name: toto-defined-service
+spec:
+  size: 2
+  service: my-rabbitmq-service
+
