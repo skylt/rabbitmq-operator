@@ -57,7 +57,8 @@
                 - name: K8S_SERVICE_NAME
                   value: '{{ service_name }}'
               envFrom:
-                - secretRef: '{{ meta.name }}-rabbitmq'
+                - secretRef: 
+                    name: '{{ meta.name }}-rabbitmq'
             volumes:
               - name: config-volume
                 configMap:
