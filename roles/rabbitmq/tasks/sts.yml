@@ -5,7 +5,7 @@
       apiVersion: apps/v1beta1
       kind: StatefulSet
       metadata:
-        name: '{{ meta.name }}-rabbitmq-sts'
+        name: '{{ meta.name }}-rabbitmq'
         namespace: '{{ meta.namespace }}'
       spec:
         serviceName: '{{ service_name }}'
@@ -59,7 +59,7 @@
                 - name: RABBITMQ_ERLANG_COOKIE
                   valueFrom:
                     secretKeyRef:
-                      name: '{{ meta.name }}-rabbitmq-secret'
+                      name: '{{ meta.name }}-rabbitmq'
                       key: token
             volumes:
               - name: config-volume
