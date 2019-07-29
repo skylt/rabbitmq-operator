@@ -7,6 +7,9 @@
       metadata:
         name: '{{ configmap_name }}'
         namespace: '{{ meta.namespace }}'
+        labels:
+          app: rabbitmq
+          origincrd: '{{ meta.name }}'
       data:
         enabled_plugins: |
             [rabbitmq_management,rabbitmq_peer_discovery_k8s].

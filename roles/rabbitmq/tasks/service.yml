@@ -10,6 +10,7 @@
         labels:
           app: rabbitmq
           type: LoadBalancer
+          origincrd: '{{ meta.name }}'
       spec:
         type: ClusterIP
         ports:

@@ -14,6 +14,7 @@
           metadata:
             labels:
               app: rabbitmq
+              origincrd: '{{ meta.name }}'
           spec:
             serviceAccountName: '{{ meta.name }}-rabbitmq'
             terminationGracePeriodSeconds: 10

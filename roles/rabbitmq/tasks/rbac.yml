@@ -7,6 +7,9 @@
       metadata:
         name: '{{ meta.name }}-rabbitmq'
         namespace: '{{ meta.namespace }}'
+        labels:
+          app: rabbitmq
+          origincrd: '{{ meta.name }}'
 
 - name: Add rbac
   k8s:
@@ -16,6 +19,9 @@
       metadata:
         name: endpoint-reader
         namespace: '{{ meta.namespace }}'
+        labels:
+          app: rabbitmq
+          origincrd: '{{ meta.name }}'
       rules:
       - apiGroups: [""]
         resources: ["endpoints"]
@@ -29,6 +35,9 @@
       metadata:
         name: endpoint-reader
         namespace: '{{ meta.namespace }}'
+        labels:
+          app: rabbitmq
+          origincrd: '{{ meta.name }}'
       subjects:
       - kind: ServiceAccount
         name: '{{ meta.name }}-rabbitmq'
