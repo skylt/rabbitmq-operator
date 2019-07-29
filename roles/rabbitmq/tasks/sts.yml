@@ -17,11 +17,20 @@
           spec:
             serviceAccountName: '{{ meta.name }}-rabbitmq'
             terminationGracePeriodSeconds: 10
+            initContainers:
+            - name: bootstrap-configuration
+              image: busybox
+              command: ['/bin/sh', '-c', 'cp /etc/rabbitmq/files/* /etc/rabbitmq/']
+              volumeMounts:
+                - name: config-volume
+                  mountPath: /etc/rabbitmq/files
+                - name: config
+                  mountPath: /etc/rabbitmq
             containers:
             - name: rabbitmq-k8s
               image: rabbitmq:3.7
               volumeMounts:
-                - name: config-volume
+                - name: config
                   mountPath: /etc/rabbitmq
               ports:
                 - name: http
@@ -60,6 +69,8 @@
                 - secretRef: 
                     name: '{{ meta.name }}-rabbitmq'
             volumes:
+              - name: config
+                emptyDir: {}
               - name: config-volume
                 configMap:
                   name: '{{ configmap_name }}'
