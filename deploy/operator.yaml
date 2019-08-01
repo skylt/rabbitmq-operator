@@ -20,7 +20,7 @@ spec:
           - /tmp/ansible-operator/runner
           - stdout
           # Replace this with the built image name
-          image: "skylt/rabbitmq-operator:v0.0.6"
+          image: "skylt/rabbitmq-operator:testing"
           imagePullPolicy: "Always"
           volumeMounts:
           - mountPath: /tmp/ansible-operator/runner
@@ -28,8 +28,7 @@ spec:
             readOnly: true
         - name: operator
           # Replace this with the built image name
-          image: "skylt/rabbitmq-operator:v0.0.6"
-          imagePullPolicy: "Always"
+          image: "skylt/rabbitmq-operator:testing"
           volumeMounts:
           - mountPath: /tmp/ansible-operator/runner
             name: runner

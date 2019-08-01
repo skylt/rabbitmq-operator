@@ -3,7 +3,7 @@
 - name: Build Operator in Kubernetes docker container
   hosts: k8s
   vars:
-    image_name: rabbitmq.olibre.io/rabbitmq-operator:testing
+    image_name: skylt/rabbitmq-operator:testing
   tasks:
   # using command so we don't need to install any dependencies
   - name: Get existing image hash
@@ -24,7 +24,6 @@
     deploy_dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/deploy"
     cr_dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/cr"
     pull_policy: Never
-    REPLACE_IMAGE: rabbitmq.olibre.io/rabbitmq-operator:testing
     custom_resource: "{{ lookup('file', '/'.join([cr_dir, 'simple.yaml'])) | from_yaml }}"
   tasks:
   - block:

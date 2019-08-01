@@ -7,7 +7,7 @@
     ansible_python_interpreter: '{{ ansible_playbook_python }}'
     deploy_dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/deploy"
     cr_dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/cr"
-    image_name: rabbitmq.olibre.io/rabbitmq-operator:testing
+    image_name: skylt/rabbitmq-operator:testing
     custom_resource: "{{ lookup('file', '/'.join([cr_dir, 'simple.yaml'])) | from_yaml }}"
   tasks:
   - name: Create the rabbitmq.olibre.io/v1alpha1.Rabbitmq
