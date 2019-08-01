@@ -3,4 +3,4 @@ kind: Rabbitmq
 metadata:
   name: toto
 spec:
-  size: 2
+  replicas: 2

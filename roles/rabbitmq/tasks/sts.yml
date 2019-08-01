@@ -9,7 +9,7 @@
         namespace: '{{ meta.namespace }}'
       spec:
         serviceName: '{{ service_name }}'
-        replicas: "{{ size }}"
+        replicas: "{{ replicas }}"
         template:
           metadata:
             labels:

@@ -1,2 +1,3 @@
 ---
 # defaults file for rabbitmq
+replicas: 1
