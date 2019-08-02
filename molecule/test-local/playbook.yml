@@ -54,7 +54,7 @@
         namespace: '{{ namespace }}'
         definition: "{{ lookup('template', '/'.join([deploy_dir, 'operator.yaml'])) }}"
 
-    - name: Create the rabbitmq.olibre.io/v1alpha1.Rabbitmq
+    - name: Create the rabbitmq.lse.epita.fr/v1alpha1.Rabbitmq
       k8s:
         state: present
         namespace: '{{ namespace }}'

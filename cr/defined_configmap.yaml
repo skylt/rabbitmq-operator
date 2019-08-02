@@ -33,7 +33,7 @@ data:
     log.console.level = debug
 
 ---
-apiVersion: rabbitmq.olibre.io/v1alpha1
+apiVersion: rabbitmq.lse.epita.fr/v1alpha1
 kind: Rabbitmq
 metadata:
   name: toto-defined-configmap

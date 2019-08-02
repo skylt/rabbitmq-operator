@@ -10,14 +10,14 @@
     image_name: skylt/rabbitmq-operator:testing
     custom_resource: "{{ lookup('file', '/'.join([cr_dir, 'simple.yaml'])) | from_yaml }}"
   tasks:
-  - name: Create the rabbitmq.olibre.io/v1alpha1.Rabbitmq
+  - name: Create the rabbitmq.lse.epita.fr/v1alpha1.Rabbitmq
     k8s:
       namespace: '{{ namespace }}'
       definition: "{{ lookup('file', '/'.join([cr_dir, 'simple.yaml'])) | from_yaml }}"
 
   - name: Get the newly created Custom Resource
     debug:
-      msg: "{{ lookup('k8s', group='rabbitmq.olibre.io', api_version='v1alpha1', kind='Rabbitmq', namespace=namespace, resource_name=custom_resource.metadata.name) }}"
+      msg: "{{ lookup('k8s', group='rabbitmq.lse.epita.fr', api_version='v1alpha1', kind='Rabbitmq', namespace=namespace, resource_name=custom_resource.metadata.name) }}"
 
   - name: Wait 60s for reconciliation to run
     k8s_facts:

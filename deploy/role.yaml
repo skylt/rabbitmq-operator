@@ -48,7 +48,7 @@ rules:
   verbs:
   - update
 - apiGroups:
-  - rabbitmq.olibre.io
+  - rabbitmq.lse.epita.fr
   resources:
   - '*'
   verbs:
