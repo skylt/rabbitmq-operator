@@ -5,5 +5,4 @@ install:
   - pip install docker molecule openshift jmespath
 script:
   - molecule test -s test-local
-  - docker build -t rabbitmq-operator-test -f build/Dockerfile .
 
