@@ -1,7 +1,8 @@
 # rabbitmq-operator
 
-Please set the namespace where the operator should be deployed to in:
-- deploy/role_binding.yaml
+## Configuration:
 
-Furthermore, you should set the correct image name in:
-- deploy/operator.yaml
+- `deploy/operator`:
+    Set the correct image name
+- `deploy/role_binding.yaml`:
+    Set the namespace where the operator will be deployed
