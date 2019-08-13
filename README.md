@@ -1,4 +1,5 @@
 # rabbitmq-operator
+[![Build Status](https://travis-ci.com/skylt/rabbitmq-operator.svg?token=HZSHnK52ZJ1RYKyjaf5C&branch=master)](https://travis-ci.com/skylt/rabbitmq-operator)
 
 ## Purpose
 
