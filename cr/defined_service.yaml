@@ -2,7 +2,6 @@
 kind: Service
 apiVersion: v1
 metadata:
-  namespace: rabbitmq-op
   name: my-rabbitmq-service
   labels:
     app: rabbitmq
