@@ -69,7 +69,7 @@
       register: cr
       until:
       - "'Successful' in (cr | json_query('resources[].status.conditions[].reason'))"
-      delay: 6
+      delay: 20
       retries: 10
     rescue:
     - name: debug cr
