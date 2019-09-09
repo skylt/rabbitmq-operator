@@ -16,3 +16,5 @@
 - import_tasks: service.yml
 
 - import_tasks: sts.yml
+
+- import_tasks: users.yml

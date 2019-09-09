@@ -1,0 +1,17 @@
+---
+
+- name: Wait for pod readiness
+  k8s_facts:
+    api_version: v1
+    kind: pod
+    namespace: '{{ meta.namespace }}'
+    name: '{{ service_name }}-0'
+  register: pod
+  until:
+  - pod["resources"][0]["status"]["containerStatuses"][0]["ready"] == true
+  delay: 5
+  retries: 13
+
+# XXX: Create task here to create users, give perms and create queues
+
+
