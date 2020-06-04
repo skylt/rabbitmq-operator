@@ -21,7 +21,6 @@ spec:
           - stdout
           # Replace this with the built image name
           image: "skylt/rabbitmq-operator:testing"
-          imagePullPolicy: "Always"
           volumeMounts:
           - mountPath: /tmp/ansible-operator/runner
             name: runner
@@ -33,6 +32,10 @@ spec:
           - mountPath: /tmp/ansible-operator/runner
             name: runner
           env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: ANSIBLE_VERBOSITY
+              value: "4"
             - name: WATCH_NAMESPACE
               value: ""
             - name: POD_NAME
